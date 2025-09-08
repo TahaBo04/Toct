@@ -1,14 +1,18 @@
-from fastapi import APIRouter, HTTPException
-from ..schemas import VaRRequest
-from ..services.risk import historical_var, expected_shortfall
+import numpy as np
 
-router = APIRouter(prefix="/risk", tags=["risk"])
+def historical_var(pnl_series: list[float], level: float) -> float:
+    pnl = np.array(pnl_series, dtype=float)
+    pnl.sort()                         # ascending: most negative first
+    n = len(pnl)
+    k = int((1 - level) * n)
+    k = max(0, min(n - 1, k))          # clamp
+    return float(pnl[k])
 
-@router.post("/var")
-def var(req: VaRRequest):
-    try:
-        v = historical_var(req.pnl_series, req.level)
-        es = expected_shortfall(req.pnl_series, req.level)
-        return {"var": v, "es": es, "level": req.level}
-    except Exception as e:
-        raise HTTPException(400, str(e))
+def expected_shortfall(pnl_series: list[float], level: float) -> float:
+    pnl = np.array(pnl_series, dtype=float)
+    pnl.sort()
+    n = len(pnl)
+    k = int((1 - level) * n)
+    k = max(0, min(n - 1, k))
+    tail = pnl[:k + 1]                 # losses at/under VaR
+    return float(tail.mean()) if len(tail) else float(pnl[0])
