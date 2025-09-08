@@ -4,44 +4,48 @@ import { useState } from "react";
 import { api } from "../../lib/api";
 
 export default function OpsControlPage() {
-  const [message, setMessage] = useState("");
-  const [log, setLog] = useState<any>(null);
+  const [stage, setStage] = useState("EXEC");
+  const [entity, setEntity] = useState("ORD-123");
+  const [latency, setLatency] = useState(120);
+  const [slaOk, setSlaOk] = useState(true);
+  const [details, setDetails] = useState('{"desk":"CASA_EQ","note":"demo"}');
+  const [res, setRes] = useState<any>(null);
+  const [err, setErr] = useState<string | null>(null);
 
-  const handleLog = async () => {
+  async function logEvent() {
+    setErr(null); setRes(null);
     try {
-      const res = await api("/ops/log", {
+      const out = await api("/ops/event", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({
+          stage,
+          entity_id: entity,
+          latency_ms: latency,
+          sla_ok: slaOk,
+          details_json: details
+        })
       });
-      setLog(res);
-    } catch (err) {
-      console.error(err);
+      setRes(out);
+    } catch (e:any) {
+      setErr(String(e));
     }
-  };
+  }
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Ops Control</h1>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Enter an event message"
-        className="border px-3 py-2 rounded w-80 mr-2 text-black"
-      />
-      <button
-        onClick={handleLog}
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-      >
-        Log Event
-      </button>
-
-      {log && (
-        <pre className="bg-gray-900 text-green-400 p-4 rounded mt-4">
-          {JSON.stringify(log, null, 2)}
-        </pre>
-      )}
+    <div className="card" style={{display:"grid", gap:12}}>
+      <h1>Ops Control</h1>
+      <input className="input" value={stage} onChange={e=>setStage(e.target.value)} placeholder="Stage"/>
+      <input className="input" value={entity} onChange={e=>setEntity(e.target.value)} placeholder="Entity ID"/>
+      <input className="input" type="number" value={latency} onChange={e=>setLatency(parseInt(e.target.value||"0"))} placeholder="Latency (ms)"/>
+      <select className="select" value={slaOk ? "1":"0"} onChange={e=>setSlaOk(e.target.value==="1")}>
+        <option value="1">SLA OK</option>
+        <option value="0">SLA Breach</option>
+      </select>
+      <input className="input" value={details} onChange={e=>setDetails(e.target.value)} placeholder='{"key":"value"}'/>
+      <button className="btn" onClick={logEvent}>Log Event</button>
+      {err && <div style={{color:"#fca5a5"}}>{err}</div>}
+      {res && <pre className="card" style={{overflowX:"auto"}}>{JSON.stringify(res,null,2)}</pre>}
     </div>
   );
 }
