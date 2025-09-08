@@ -2,20 +2,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Install dependencies
+# Install deps
 COPY package.json ./
 RUN npm install --legacy-peer-deps
 
 # Copy source
 COPY . .
 
-# Disable telemetry + force production mode
+# Build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
-
-# Build Next.js app
 RUN npm run build
 
-# Expose & run
+# Run
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npm","start"]
