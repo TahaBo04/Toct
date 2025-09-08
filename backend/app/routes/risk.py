@@ -1,18 +1,19 @@
-import numpy as np
+from fastapi import APIRouter, HTTPException
+from ..schemas import VaRRequest
+from ..services.risk import historical_var, expected_shortfall
 
-def historical_var(pnl_series: list[float], level: float) -> float:
-    pnl = np.array(pnl_series, dtype=float)
-    pnl.sort()                         # ascending: most negative first
-    n = len(pnl)
-    k = int((1 - level) * n)
-    k = max(0, min(n - 1, k))          # clamp
-    return float(pnl[k])
+# Create the router for this module
+router = APIRouter(prefix="/risk", tags=["Risk"])
 
-def expected_shortfall(pnl_series: list[float], level: float) -> float:
-    pnl = np.array(pnl_series, dtype=float)
-    pnl.sort()
-    n = len(pnl)
-    k = int((1 - level) * n)
-    k = max(0, min(n - 1, k))
-    tail = pnl[:k + 1]                 # losses at/under VaR
-    return float(tail.mean()) if len(tail) else float(pnl[0])
+@router.post("/var")
+def compute_var_es(req: VaRRequest):
+    """
+    Compute Value-at-Risk (VaR) and Expected Shortfall (ES)
+    for a given PnL series at the chosen confidence level.
+    """
+    try:
+        v = historical_var(req.pnl_series, req.level)
+        es = expected_shortfall(req.pnl_series, req.level)
+        return {"var": v, "es": es, "level": req.level}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
