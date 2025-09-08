@@ -1,18 +1,21 @@
-# frontend/Dockerfile
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Install deps
-COPY package.json package-lock.json* ./
-RUN npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+# Install dependencies
+COPY package.json ./
+RUN npm install --legacy-peer-deps
 
-# Build
+# Copy source
 COPY . .
+
+# Disable telemetry + force production mode
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
+
+# Build Next.js app
 RUN npm run build
 
-# Run
+# Expose & run
 EXPOSE 3000
-ENV HOST=0.0.0.0
-CMD ["npm","run","start","--","-p","3000","-H","0.0.0.0"]
+CMD ["npm", "start"]
