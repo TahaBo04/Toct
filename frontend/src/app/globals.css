@@ -1,10 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Global styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
 
-:root { --bg: #0b0f17; --ink: #e7f2ef; --accent: #1cf5a6; }
-body { background: var(--bg); color: var(--ink); }
-a { color: var(--accent); }
-.card { @apply rounded-xl border border-white/10 bg-white/5 p-5 shadow; }
-.h1 { @apply text-3xl font-semibold; }
-.kpi { @apply text-2xl font-semibold; }
+a {
+  color: #38bdf8;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+}
