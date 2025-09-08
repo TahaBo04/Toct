@@ -10,17 +10,18 @@ export default function RiskPage() {
   const [err, setErr] = useState<string | null>(null);
 
   async function compute() {
-    setErr(null); setRes(null);
-    const arr = pnl.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
     try {
+      setErr(null);
+      setRes(null);
+      const arr = pnl.split(",").map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
       const out = await api("/risk/var", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ pnl_series: arr, level })
       });
       setRes(out);
-    } catch (e:any) {
-      setErr(String(e));
+    } catch (e: any) {
+      setErr(String(e?.message || e));
+      console.error(e);
     }
   }
 
@@ -35,7 +36,7 @@ export default function RiskPage() {
                  onChange={e=>setLevel(parseFloat(e.target.value))}/>
           <button className="btn" onClick={compute}>Compute</button>
         </div>
-        {err && <div style={{color:"#fca5a5"}}>{err}</div>}
+        {err && <div style={{color:"#fca5a5"}}>Error: {err}</div>}
         {res && <pre className="card" style={{overflowX:"auto"}}>{JSON.stringify(res,null,2)}</pre>}
       </div>
     </div>
