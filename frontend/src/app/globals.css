@@ -1,7 +1,37 @@
-html, body { margin: 0; padding: 0; font-family: system-ui, Arial, sans-serif; background:#0f172a; color:#e5e7eb; }
-a { color:#38bdf8; text-decoration:none; }
-.container { max-width: 960px; margin: 0 auto; padding: 24px; }
-.card { background:#111827; border:1px solid #1f2937; border-radius:12px; padding:16px; }
-.btn { background:#2563eb; color:white; border:none; padding:8px 12px; border-radius:8px; }
-.input, .textarea, .select { width:100%; padding:8px; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#e5e7eb; }
-.grid2 { display:grid; gap:16px; grid-template-columns: 1fr 1fr; }
+:root{
+  --bg:#0b1220; --panel:#0f172a; --card:#111827;
+  --text:#e5e7eb; --muted:#94a3b8; --line:#1f2937;
+  --brand:#38bdf8; --brand-2:#2563eb; --err:#ef4444;
+}
+
+html,body{background:var(--bg);color:var(--text)}
+a{color:var(--brand);text-decoration:none}
+.container{max-width:1100px;margin:0 auto;padding:0 20px}
+
+.nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(6px);
+     background:rgba(11,18,32,.85);border-bottom:1px solid var(--line)}
+.nav__wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{font-weight:800;letter-spacing:.3px}
+.brand__dot{color:var(--brand)}
+.nav__links a{margin-left:16px}
+
+.main{padding:28px 0 60px}
+
+.section{margin:28px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grid-2{display:grid;gap:24px;grid-template-columns:1fr 1fr}
+@media (max-width:900px){ .grid-2{grid-template-columns:1fr;} }
+
+.label{display:block;margin:10px 0 6px;font-size:14px;color:var(--muted)}
+.input, textarea{width:100%;background:#0a1222;border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;color:var(--text)}
+textarea{resize:vertical}
+.btn{display:inline-block;background:var(--brand-2);border:none;color:white;
+  padding:10px 14px;border-radius:10px;font-weight:600}
+.btn--full{width:100%;margin-top:12px}
+.small{font-size:13px}
+.muted{color:var(--muted)}
+.error{margin-top:10px;color:var(--err);font-weight:600}
+
+.footer{border-top:1px solid var(--line);background:var(--panel);padding:18px 0}
+.footer__wrap{display:flex;justify-content:space-between;align-items:center}
