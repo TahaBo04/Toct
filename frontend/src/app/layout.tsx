@@ -1,24 +1,34 @@
+// src/app/layout.tsx
 import "./globals.css";
-import Link from "next/link";
 
 export const metadata = {
-  title: "Trading Ops Control Tower — Portfolio",
-  description: "Risk, Ops Control, and Compliance demo."
+  title: "TOCT — Trading Ops Control Tower",
+  description: "Risk (VaR/ES), Ops Control, and Compliance demo",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <nav className="container" style={{display:"flex",gap:16,alignItems:"center"}}>
-          <Link href="/" style={{fontWeight:700}}>TOCT</Link>
-          <Link href="/risk">Risk</Link>
-          <Link href="/ops-control">Ops Control</Link>
-          <Link href="/compliance">Compliance</Link>
-        </nav>
-        <main className="container">{children}</main>
-        <footer className="container" style={{opacity:.7,paddingBottom:32}}>
-          Built by Boulaamane Taha — Process Engineer → Markets
+        <header className="nav">
+          <div className="container nav__wrap">
+            <a className="brand" href="/">TOCT<span className="brand__dot">•</span></a>
+            <nav className="nav__links">
+              <a href="/">Home</a>
+              <a href="/risk">Risk</a>
+              <a href="/ops-control">Ops Control</a>
+              <a href="/compliance">Compliance</a>
+            </nav>
+          </div>
+        </header>
+
+        <main className="container main">{children}</main>
+
+        <footer className="footer">
+          <div className="container footer__wrap">
+            <span>© {new Date().getFullYear()} Boulaamane Taha — Process Engineer → Markets</span>
+            <span className="muted small">TOCT v1</span>
+          </div>
         </footer>
       </body>
     </html>
